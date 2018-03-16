@@ -34,8 +34,8 @@ abstract class Element {
     if (height == maxHeight) return this.contents
 
     val ws			= " "
-    val upperAdd	= Array.fill((maxHeight - height) / 2){ws}
-    val bottomAdd	= Array.fill((maxHeight - height) / 2 + (maxHeight - height) % 2){ws}
+    val upperAdd	= Array.fill((maxHeight - height) / 2){ ws * this.contents(0).length}
+    val bottomAdd	= Array.fill((maxHeight - height) / 2 + (maxHeight - height) % 2){ws * this.contents(0).length}
     upperAdd ++ contents ++ bottomAdd
   }
 
@@ -68,8 +68,7 @@ object Element {
 
 
   private class LineElement(s: String) extends Element {
-    override def contents: Array[String] = Array(s)
-    override def height: Int = 1
+    override def contents: Array[String] = s.split('\n')
   }
 
   def elem(contents: Array[String]):Element = { new ArrayElement(contents) }

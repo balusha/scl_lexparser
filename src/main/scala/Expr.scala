@@ -34,20 +34,29 @@ sealed abstract class Expr {
       case Var(name) => name
       case Num(i : Int) => i.toString
       case BinOp(a, b, "/") => {
+        val ws        : Element = elem(" ")
         val elemA     : Element = elem(a.toString(0))
         val elemB     : Element = elem(b.toString(0))
-        val fracDelim : Element = elem('-', 1, elemA.contents(0).length max elemB.contents(0).length)
-        (elemA above fracDelim above elemB).toString
+        val maxHeight : Int = elemA.contents.length max elemB.contents.length
+        val maxLength : Int = elemA.contents(0).length max elemB.contents(0).length
+        val elemA1    : Element = elem(elemA.heighten(maxHeight))
+        val elemB1    : Element = elem(elemB.heighten(maxHeight))
+        val fracDelim : Element = ws beside elem('-', 1, maxLength) beside ws
+        (elemA1 above fracDelim above elemB1).toString
       }
       case BinOp(a, b, op) => {
         val innerPrec = precedence(op)
+        val ws        : Element = elem(" ")
         val elemA     : Element = elem(a.toString(innerPrec))
         val elemB     : Element = elem(b.toString(innerPrec))
-        val res = (elemA beside elem(op) beside elemB).toString
-        if (innerPrec < outerPrec)
-          s"(${res})"
+        val res = elemA beside ws beside elem(op) beside ws beside elemB
+        if (innerPrec < outerPrec) {
+          val prntsL = elem("(")
+          val prntsR = elem(")")
+          (prntsL beside res beside prntsR).toString
+        }
         else
-          res
+          res.toString
       }
       case UnOp(a, op) => s"${op} ${a.toString}"
     }
